@@ -10,8 +10,8 @@
 > sign-off by a qualified human compliance officer before any action is
 > taken on it.**
 >
-> This repository is a **portfolio engineering demo**. All bank names,
-> account holders, transactions, and watchlist entries are **entirely
+> This repository is just a **demo that mimick realities of everyday banking activities**. All bank names,
+> account holders, transactiosn, and watchlist entries are **entirely
 > fictional and synthetic**, generated for this project. The example bank,
 > **"Northbridge Financial Group,"** is an invented brand that does not
 > exist. Nothing here describes, references, or is derived from any real
@@ -22,9 +22,7 @@
 
 ## Why this exists
 
-Banks increasingly want to know whether candidates can build agentic AI
-systems that are actually safe to deploy near a regulated workflow, not
-just impressive in a demo. This project is a worked example of that: a
+Banks increasingly needs to build reliable multi-agent systems. This project is a worked example of that: a
 CrewAI multi-agent system that investigates a synthetic fraud/AML alert
 end to end, with the guardrails a reviewer would actually look for --
 deterministic fact-finding, a bounded human-in-the-loop critique cycle, a
