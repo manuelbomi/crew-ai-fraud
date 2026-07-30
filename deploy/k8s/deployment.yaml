@@ -1,0 +1,74 @@
+# Illustrative Deployment manifest. Values (replicas, resources) are demo
+# defaults -- tune for real workload/traffic before using in any real
+# environment.
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: fraud-aml-investigation-crew
+  labels:
+    app: fraud-aml-investigation-crew
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: fraud-aml-investigation-crew
+  template:
+    metadata:
+      labels:
+        app: fraud-aml-investigation-crew
+    spec:
+      # Run as a non-root, non-privileged user matching the Dockerfile's
+      # `appuser` (uid/gid 1000). OpenShift's restricted SCC will assign a
+      # different uid automatically at admission time -- see ../OPENSHIFT.md.
+      securityContext:
+        runAsNonRoot: true
+        runAsUser: 1000
+        runAsGroup: 1000
+        fsGroup: 1000
+        seccompProfile:
+          type: RuntimeDefault
+      containers:
+        - name: fraud-aml-investigation-crew
+          image: fraud-aml-investigation-crew:local
+          imagePullPolicy: IfNotPresent
+          ports:
+            - containerPort: 8000
+              name: http
+          envFrom:
+            - configMapRef:
+                name: fraud-crew-config
+            - secretRef:
+                name: fraud-crew-secrets
+                optional: true
+          securityContext:
+            allowPrivilegeEscalation: false
+            readOnlyRootFilesystem: true
+            capabilities:
+              drop: ["ALL"]
+          resources:
+            requests:
+              cpu: "100m"
+              memory: "256Mi"
+            limits:
+              cpu: "500m"
+              memory: "512Mi"
+          livenessProbe:
+            httpGet:
+              path: /healthz
+              port: http
+            initialDelaySeconds: 10
+            periodSeconds: 15
+          readinessProbe:
+            httpGet:
+              path: /readyz
+              port: http
+            initialDelaySeconds: 5
+            periodSeconds: 10
+          volumeMounts:
+            - name: tmp
+              mountPath: /tmp
+      volumes:
+        # readOnlyRootFilesystem above requires a writable /tmp for the
+        # audit log / any scratch files.
+        - name: tmp
+          emptyDir: {}

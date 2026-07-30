@@ -1,0 +1,10 @@
+# Pinned runtime dependencies. Kept in sync with the [project.dependencies]
+# table in pyproject.toml -- this file is what the Dockerfile installs from
+# (a plain requirements.txt keeps the Docker build simple/cacheable).
+crewai==1.15.9
+pydantic==2.12.5
+pydantic-settings==2.14.2
+fastapi==0.141.1
+uvicorn[standard]==0.52.0
+tenacity==9.1.4
+python-dotenv==1.2.2

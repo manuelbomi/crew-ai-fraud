@@ -1,0 +1,27 @@
+# One-command local dev spin-up. No external services required -- the
+# crew runs fully offline against MockLLM unless real API keys are
+# supplied via a local .env file (see .env.example).
+services:
+  fraud-crew-api:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: fraud-aml-investigation-crew:local
+    ports:
+      - "8000:8000"
+    environment:
+      APP_ENV: docker
+      LOG_LEVEL: INFO
+      MAX_COMPLIANCE_ITERATIONS: "3"
+      API_HOST: "0.0.0.0"
+      API_PORT: "8000"
+    env_file:
+      - path: .env
+        required: false
+    healthcheck:
+      test: ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://localhost:8000/healthz', timeout=3)"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+      start_period: 10s
+    restart: unless-stopped

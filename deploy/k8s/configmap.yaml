@@ -1,0 +1,18 @@
+# Non-secret configuration. Real credentials (OPENAI_API_KEY etc.) belong
+# in a Secret (see fraud-crew-secrets, referenced as `optional: true` in
+# deployment.yaml so the app still starts -- and falls back to MockLLM --
+# if no such Secret exists in the namespace).
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: fraud-crew-config
+data:
+  APP_ENV: "production"
+  LOG_LEVEL: "INFO"
+  MAX_COMPLIANCE_ITERATIONS: "3"
+  API_HOST: "0.0.0.0"
+  API_PORT: "8000"
+  ENABLE_TRACING_SPANS: "true"
+  MODEL_NAME: "gpt-4o-mini"
+  LLM_REQUEST_TIMEOUT_SECONDS: "30"
+  LLM_MAX_RETRIES: "3"

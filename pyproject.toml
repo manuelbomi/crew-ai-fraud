@@ -1,0 +1,60 @@
+[project]
+name = "fraud-crew"
+version = "0.1.0"
+description = "CrewAI multi-agent system for synthetic fraud/AML case investigation support (portfolio demo)."
+readme = "README.md"
+requires-python = ">=3.11,<3.13"
+license = { text = "MIT" }
+dependencies = [
+    "crewai==1.15.9",
+    "pydantic==2.12.5",
+    "pydantic-settings==2.14.2",
+    "fastapi==0.141.1",
+    "uvicorn[standard]==0.52.0",
+    "tenacity==9.1.4",
+    "python-dotenv==1.2.2",
+]
+
+[project.optional-dependencies]
+dev = [
+    "pytest==9.1.1",
+    "pytest-asyncio==1.4.0",
+    "pytest-cov==7.1.0",
+    "httpx==0.28.1",
+    "ruff==0.16.0",
+    "mypy==2.3.0",
+]
+
+[build-system]
+requires = ["setuptools>=68", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+pythonpath = ["src"]
+
+[tool.ruff]
+line-length = 110
+target-version = "py311"
+
+[tool.ruff.lint]
+select = ["E", "F", "I", "B", "UP"]
+# E501: line length is handled by formatting judgment call, not a hard gate.
+# UP042: `class X(str, Enum)` is kept deliberately (rather than StrEnum) for
+# clarity in Pydantic model field annotations and broad IDE/tool familiarity.
+ignore = ["E501", "UP042"]
+
+[tool.mypy]
+# 3.12, not 3.11, even though requires-python allows 3.11: some transitive
+# third-party stub files (e.g. numpy, pulled in via crewai's dependency
+# tree) use PEP 695 syntax that mypy only parses at >=3.12. This only
+# affects what syntax mypy will accept while type-checking; it does not
+# change the runtime interpreter this package supports.
+python_version = "3.12"
+ignore_missing_imports = true
+disallow_untyped_defs = false
+warn_unused_ignores = true
+exclude = ["tests/", "scratch_.*\\.py"]
